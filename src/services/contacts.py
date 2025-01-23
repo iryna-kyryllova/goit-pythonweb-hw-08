@@ -1,30 +1,24 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.repository.notes import NoteRepository
-from src.repository.tags import TagRepository
-from src.schemas import NoteModel, NoteUpdate, NoteStatusUpdate
+from src.repository.contacts import ContactRepository
+from src.schemas.contacts import ContactBase, ContactResponse
 
-class NoteService:
+
+class ContactService:
     def __init__(self, db: AsyncSession):
-        self.note_repository = NoteRepository(db)
-        self.tag_repository = TagRepository(db)
+        self.contact_repository = ContactRepository(db)
 
-    async def create_note(self, body: NoteModel):
-        tags = await self.tag_repository.get_tags_by_ids(body.tags)
-        return await self.note_repository.create_note(body, tags)
+    async def create_contact(self, body: ContactBase):
+        return await self.contact_repository.create_contact(body)
 
-    async def get_notes(self, skip: int, limit: int):
-        return await self.note_repository.get_notes(skip, limit)
+    async def get_contacts(self, skip: int, limit: int):
+        return await self.contact_repository.get_contacts(skip, limit)
 
-    async def get_note(self, note_id: int):
-        return await self.note_repository.get_note_by_id(note_id)
+    async def get_contact(self, contact_id: int):
+        return await self.contact_repository.get_contact_by_id(contact_id)
 
-    async def update_note(self, note_id: int, body: NoteUpdate):
-        tags = await self.tag_repository.get_tags_by_ids(body.tags)
-        return await self.note_repository.update_note(note_id, body, tags)
+    async def update_contact(self, contact_id: int, body: ContactBase):
+        return await self.contact_repository.update_contact(contact_id, body)
 
-    async def update_status_note(self, note_id: int, body: NoteStatusUpdate):
-        return await self.note_repository.update_status_note(note_id, body)
-
-    async def remove_note(self, note_id: int):
-        return await self.note_repository.remove_note(note_id)
+    async def remove_contact(self, contact_id: int):
+        return await self.contact_repository.remove_contact(contact_id)
