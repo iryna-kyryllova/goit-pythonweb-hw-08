@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from sqlalchemy import Integer, String, func
 from sqlalchemy.orm import mapped_column, Mapped, DeclarativeBase
-from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.sqltypes import DateTime, Date
 
 
 class Base(DeclarativeBase):
@@ -21,5 +21,5 @@ class Contact(Base):
     last_name: Mapped[str] = mapped_column(String(50), nullable=False)
     email: Mapped[str] = mapped_column(String(100), nullable=False)
     phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
-    birthdat: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    birthday: Mapped[date] = mapped_column(Date, nullable=False)
     additional_data: Mapped[str] = mapped_column(String(200))

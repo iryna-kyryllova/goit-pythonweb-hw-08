@@ -10,7 +10,8 @@ requires-python = ">=3.13"
 dependencies = [
     "asyncpg (>=0.30.0,<0.31.0)",
     "black (>=24.10.0,<25.0.0)",
-    "alembic (>=1.14.1,<2.0.0)"
+    "alembic (>=1.14.1,<2.0.0)",
+    "pydantic (>=2.10.5,<3.0.0)"
 ]
 
 
