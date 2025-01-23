@@ -2,6 +2,7 @@ from datetime import datetime, date
 from typing import List, Optional
 from pydantic import BaseModel, Field, ConfigDict, EmailStr, field_validator
 
+
 class ContactBase(BaseModel):
     first_name: str = Field(max_length=50, min_length=2)
     last_name: str = Field(max_length=50, min_length=2)
