@@ -1,6 +1,7 @@
 from typing import List
+from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import select
+from sqlalchemy import select, or_, extract
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import Contact
@@ -47,3 +48,35 @@ class ContactRepository:
             await self.db.refresh(contact)
 
         return contact
+
+    async def search_contacts(
+        self, search: str, skip: int, limit: int
+    ) -> List[Contact]:
+        stmt = (
+            select(Contact)
+            .filter(
+                or_(
+                    Contact.first_name.ilike(f"%{search}%"),
+                    Contact.last_name.ilike(f"%{search}%"),
+                    Contact.email.ilike(f"%{search}%"),
+                )
+            )
+            .offset(skip)
+            .limit(limit)
+        )
+        contacts = await self.db.execute(stmt)
+        return contacts.scalars().all()
+
+    async def get_week_birthdays(self, days: int) -> List[Contact]:
+        today = datetime.now(timezone.utc).date()
+        end_date = today + timedelta(days=days)
+
+        stmt = select(Contact).filter(
+            (extract("month", Contact.birthday) == today.month)
+            & (extract("day", Contact.birthday) >= today.day)
+            | (extract("month", Contact.birthday) == end_date.month)
+            & (extract("day", Contact.birthday) <= end_date.day)
+        )
+
+        contacts = await self.db.execute(stmt)
+        return contacts.scalars().all()

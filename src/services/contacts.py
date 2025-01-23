@@ -22,3 +22,9 @@ class ContactService:
 
     async def remove_contact(self, contact_id: int):
         return await self.contact_repository.remove_contact(contact_id)
+
+    async def search_contacts(self, search: int, skip: int, limit: int):
+        return await self.contact_repository.search_contacts(search, skip, limit)
+
+    async def get_week_birthdays(self, days: int):
+        return await self.contact_repository.get_week_birthdays(days)
