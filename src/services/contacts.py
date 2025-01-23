@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repository.contacts import ContactRepository
-from src.schemas.contacts import ContactBase, ContactResponse
+from src.schemas.contacts import ContactBase
 
 
 class ContactService:

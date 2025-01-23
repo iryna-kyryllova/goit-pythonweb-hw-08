@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import Contact
-from src.schemas.contacts import ContactBase, ContactResponse
+from src.schemas.contacts import ContactBase
 
 
 class ContactRepository:
@@ -29,7 +29,7 @@ class ContactRepository:
         return await self.get_contact_by_id(contact.id)
 
     async def remove_contact(self, contact_id: int) -> Contact | None:
-        contact = await self.get_note_by_id(contact_id)
+        contact = await self.get_contact_by_id(contact_id)
         if contact:
             await self.db.delete(contact)
             await self.db.commit()
