@@ -5,64 +5,61 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.db import get_db
 from src.schemas.contacts import ContactBase, ContactResponse
-from src.services.notes import NoteService
+from src.services.contacts import ContactService
+from src.conf import messages
 
-router = APIRouter(prefix="/notes", tags=["notes"])
+router = APIRouter(prefix="/contacts", tags=["contacts"])
 
-@router.get("/", response_model=List[NoteResponse])
-async def read_notes(
+
+@router.get("/", response_model=List[ContactResponse], status_code=status.HTTP_200_OK)
+async def read_contacts(
     skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)
 ):
-    note_service = NoteService(db)
-    notes = await note_service.get_notes(skip, limit)
-    return notes
+    contact_service = ContactService(db)
+    contacts = await contact_service.get_contacts(skip, limit)
+    return contacts
 
-@router.get("/{note_id}", response_model=NoteResponse)
-async def read_note(note_id: int, db: AsyncSession = Depends(get_db)):
-    note_service = NoteService(db)
-    note = await note_service.get_note(note_id)
-    if note is None:
+
+@router.get(
+    "/{contact_id}", response_model=ContactResponse, status_code=status.HTTP_200_OK
+)
+async def read_contact(contact_id: int, db: AsyncSession = Depends(get_db)):
+    contact_service = ContactService(db)
+    contact = await contact_service.get_note(contact_id)
+    if contact is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Note not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=messages.CONTACT_NOT_FOUND
         )
-    return note
+    return contact
 
-@router.post("/", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
-async def create_note(body: NoteModel, db: AsyncSession = Depends(get_db)):
-    note_service = NoteService(db)
-    return await note_service.create_note(body)
 
-@router.put("/{note_id}", response_model=NoteResponse)
-async def update_note(
-    body: NoteUpdate, note_id: int, db: AsyncSession = Depends(get_db)
+@router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
+async def create_contact(body: ContactBase, db: AsyncSession = Depends(get_db)):
+    contact_service = ContactService(db)
+    return await contact_service.create_contact(body)
+
+
+@router.put(
+    "/{contact_id}", response_model=ContactResponse, status_code=status.HTTP_201_CREATED
+)
+async def update_contact(
+    body: ContactBase, contact_id: int, db: AsyncSession = Depends(get_db)
 ):
-    note_service = NoteService(db)
-    note = await note_service.update_note(note_id, body)
-    if note is None:
+    contact_service = ContactService(db)
+    contact = await contact_service.update_contact(contact_id, body)
+    if contact is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Note not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=messages.CONTACT_NOT_FOUND
         )
-    return note
+    return contact
 
-@router.patch("/{note_id}", response_model=NoteResponse)
-async def update_status_note(
-    body: NoteStatusUpdate, note_id: int, db: AsyncSession = Depends(get_db)
-):
-    note_service = NoteService(db)
-    note = await note_service.update_status_note(note_id, body)
-    if note is None:
+
+@router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def remove_contact(contact_id: int, db: AsyncSession = Depends(get_db)):
+    contact_service = ContactService(db)
+    contact = await contact_service.remove_contact(contact_id)
+    if contact is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Note not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=messages.CONTACT_NOT_FOUND
         )
-    return note
-
-@router.delete("/{note_id}", response_model=NoteResponse)
-async def remove_note(note_id: int, db: AsyncSession = Depends(get_db)):
-    note_service = NoteService(db)
-    note = await note_service.remove_note(note_id)
-    if note is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Note not found"
-        )
-    return note
-
+    return
